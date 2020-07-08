@@ -5,10 +5,9 @@
 
 const float Game::PlayerSpeed = 200.f;
 const float Game::WeaponSpeed = 3.f;
+float Game::TimeSpawnWave = 0.f;
+float Game::TimeEnemyMasterSpawn = 0.f;
 const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
-const sf::Time Game::TimeEnemySpawn = sf::seconds(1.f);
-const sf::Time Game::TimeEnemyMasterSpawn = sf::seconds(10.f);
-const sf::Time Game::TimeSpawnWave = sf::seconds(3.f);
 
 Game::Game()
 	: mWindow(sf::VideoMode(840, 600), "Zaxxon 2020", sf::Style::Close)
@@ -76,39 +75,6 @@ void Game::InitSprites() {
     player->m_position = mPlayer.getPosition();
     EntityManager::m_Entities.push_back(player);
 
-    //
-    // Enemy Master
-    //
-
-    float yMasterPosition = (float(rand()) / float((RAND_MAX)) * 500);
-    _EnemyMaster.setTexture(_TextureEnemyMaster);
-    _EnemyMaster.setPosition(860.f, yMasterPosition);
-    _EnemyMaster.setRotation(70.f);
-    std::shared_ptr<Entity> sem = std::make_shared<Entity>();
-    sem->m_sprite = _EnemyMaster;
-    sem->m_type = EntityType::enemyMaster;
-    sem->m_size = _TextureEnemyMaster.getSize();
-    sem->m_position = _EnemyMaster.getPosition();
-    EntityManager::m_Entities.push_back(sem);
-
-
-    //
-    // Enemy
-    //
-    for (int i = 0; i < SPRITE_COUNT_Y; i++) {
-        float yEnemyPosition = (float(rand()) / float((RAND_MAX)) * 500);
-        _Enemy[i].setTexture(_TextureEnemy);
-        _Enemy[i].setRotation(70.f);
-        _Enemy[i].setPosition(860.f + 50.f * (i + 1), yEnemyPosition);
-
-        std::shared_ptr<Entity> se = std::make_shared<Entity>();
-        se->m_sprite = _Enemy[i];
-        se->m_type = EntityType::enemy;
-        se->m_size = _TextureEnemy.getSize();
-        se->m_position = _Enemy[i].getPosition();
-        EntityManager::m_Entities.push_back(se);
-    }
-
 
 	mStatisticsText.setFont(mFont);
 	mStatisticsText.setPosition(5.f, 5.f);
@@ -149,6 +115,7 @@ void Game::run()
 
 			processEvents();
 			update(TimePerFrame);
+            spawnEnemies(elapsedTime);
 		}
 
 		updateStatistics(elapsedTime);
@@ -246,6 +213,7 @@ void Game::updateStatistics(sf::Time elapsedTime)
 	// Handle collisions
 	//
 
+
 	if (mStatisticsUpdateTime >= sf::seconds(0.050f))
 	{
 		if (_IsGameOver == true)
@@ -257,8 +225,6 @@ void Game::updateStatistics(sf::Time elapsedTime)
 		HandleCollisionWeaponPlayer();
 		HandleCollisionEnemyMasterWeaponPlayer();
 		HandleCollisionWeaponEnemyMaster();
-		//HandleEnemyMasterSpawn();
-		//HandleEnemySpawn();
 		HanldeWeaponMoves();
 		HanldeEnemyWeaponMoves();
 		HanldeEnemyMasterWeaponMoves();
@@ -523,10 +489,6 @@ void Game::HandleEnemyWeaponFiring()
 			x + _TextureWeaponEnemy.getSize().x / 2.f,
 			y + _TextureWeaponEnemy.getSize().y / 2.f);
 
-		/*sw->m_sprite.setPosition(
-			entity->m_sprite.getPosition().x + _TextureEnemy.getSize().x / 2,
-			entity->m_sprite.getPosition().y - 10);*/
-
 		sw->m_type = EntityType::enemyWeapon;
 		sw->m_size = _TextureWeaponEnemy.getSize();
 		EntityManager::m_Entities.push_back(sw);
@@ -536,56 +498,56 @@ void Game::HandleEnemyWeaponFiring()
 	}
 }
 
-void Game::HandleEnemyMasterSpawn() {
-    //
-    // Enemy Master
-    //
-    srand(time(NULL));
-    sf::Clock clock; // starts the clock
-    sf::Time spawnTimer = clock.getElapsedTime();
-
-    if(spawnTimer == TimeEnemyMasterSpawn) {
-        float yMasterPosition = (float(rand()) / float((RAND_MAX)) * 500);
-        _EnemyMaster.setTexture(_TextureEnemyMaster);
-        _EnemyMaster.setPosition(860.f, yMasterPosition);
-        _EnemyMaster.setRotation(70.f);
-        std::shared_ptr<Entity> sem = std::make_shared<Entity>();
-        sem->m_sprite = _EnemyMaster;
-        sem->m_type = EntityType::enemyMaster;
-        sem->m_size = _TextureEnemyMaster.getSize();
-        sem->m_position = _EnemyMaster.getPosition();
-        EntityManager::m_Entities.push_back(sem);
+void Game::spawnEnemies(sf::Time elapsedTime) {
+    TimeEnemyMasterSpawn += elapsedTime.asSeconds();
+    TimeSpawnWave += elapsedTime.asSeconds();
+    if (EntityManager::GetEnemyMaster() == nullptr) {
+        HandleEnemyMasterSpawn();
+    } else {
+        if(TimeEnemyMasterSpawn >= 3.f) {
+            HandleEnemyMasterSpawn();
+            TimeEnemyMasterSpawn = 0.f;
+        }
     }
-    clock.restart();
+    if (TimeSpawnWave >= 2.f) {
+        HandleEnemySpawn();
+        TimeSpawnWave = 0.f;
+    }
+}
+
+void Game::HandleEnemyMasterSpawn() {
+    srand(time(NULL));
+
+    float yMasterPosition = (float(rand()) / float((RAND_MAX)) * 500);
+    _EnemyMaster.setTexture(_TextureEnemyMaster);
+    _EnemyMaster.setPosition(860.f, yMasterPosition);
+    _EnemyMaster.setRotation(70.f);
+
+    std::shared_ptr<Entity> sem = std::make_shared<Entity>();
+    sem->m_sprite = _EnemyMaster;
+    sem->m_type = EntityType::enemyMaster;
+    sem->m_size = _TextureEnemyMaster.getSize();
+    sem->m_position = _EnemyMaster.getPosition();
+    EntityManager::m_Entities.push_back(sem);
 }
 
 void Game::HandleEnemySpawn() {
     srand(time(NULL));
-    sf::Clock clock1; // starts the clock
-    sf::Clock clock2;
-    sf::Time spawnTimer = clock1.getElapsedTime();
-    sf::Time spawnTimerWave = clock2.getElapsedTime();
-    //
-    // Handle Enemies Spawn
-    //
-    for (int i = 0; i < SPRITE_COUNT_Y; i++)
-    {
-        if(spawnTimer >= TimeEnemySpawn) {
-            float yPosition = (float(rand()) / float((RAND_MAX)) * 500);
-            _Enemy[i].setTexture(_TextureEnemy);
-            _Enemy[i].setRotation(70.f);
-            _Enemy[i].setPosition(860.f + 50.f * (i + 1), yPosition);
 
-            std::shared_ptr<Entity> se = std::make_shared<Entity>();
-            se->m_sprite = _Enemy[i];
-            se->m_type = EntityType::enemy;
-            se->m_size = _TextureEnemy.getSize();
-            se->m_position = _Enemy[i].getPosition();
-            EntityManager::m_Entities.push_back(se);
-        }
-        clock1.restart();
+    for (int i = 0; i < SPRITE_COUNT_Y; i++) {
+        float yPosition = (float(rand()) / float((RAND_MAX)) * 500);
+
+        _Enemy[i].setTexture(_TextureEnemy);
+        _Enemy[i].setRotation(245.f);
+        _Enemy[i].setPosition(860.f + 50.f * (i + 1), yPosition);
+
+        std::shared_ptr<Entity> se = std::make_shared<Entity>();
+        se->m_sprite = _Enemy[i];
+        se->m_type = EntityType::enemy;
+        se->m_size = _TextureEnemy.getSize();
+        se->m_position = _Enemy[i].getPosition();
+        EntityManager::m_Entities.push_back(se);
     }
-    clock2.restart();
 }
 
 void Game::HandleEnemyMoves()

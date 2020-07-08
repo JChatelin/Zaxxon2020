@@ -18,19 +18,19 @@ private:
 	void InitSprites();
 	void ResetSprites();
 
-	void spawnEnemies();
+    void HandleEnemySpawn();
+    void HandleEnemyMasterSpawn();
+    void spawnEnemies(sf::Time elapsedTime);
 
 	void updateStatistics(sf::Time elapsedTime);
 	void HandleTexts();
 	void HandleCollisionEnemyMasterWeaponPlayer();
 	void HanldeEnemyMasterWeaponMoves();
 	void HandleEnemyMasterWeaponFiring();
-	void HandleEnemyMasterSpawn();
 	void HandleEnemyMasterMove();
 	void HandleCollisionWeaponPlayer();
 	void HanldeEnemyWeaponMoves();
 	void HandleEnemyWeaponFiring();
-	void HandleEnemySpawn();
 	void HandleEnemyMoves();
 	void HanldeWeaponMoves();
 	void HandleCollisionWeaponEnemy();
@@ -42,10 +42,9 @@ private:
 private:
 	static const float		PlayerSpeed;
 	static const float      WeaponSpeed;
+    static float      TimeEnemyMasterSpawn;
+    static float      TimeSpawnWave;
 	static const sf::Time	TimePerFrame;
-	static const sf::Time   TimeEnemySpawn;
-	static const sf::Time   TimeEnemyMasterSpawn;
-	static const sf::Time   TimeSpawnWave;
 
 	sf::RenderWindow		mWindow;
 	sf::Texture	mTexture;
