@@ -1,7 +1,6 @@
 #pragma once
-#include "Weapon.h"
 
-#define SPRITE_COUNT_Y 5
+#define SPRITE_COUNT 5
 
 class Game
 {
@@ -70,7 +69,7 @@ private:
 	bool _IsEnemyMasterWeaponFired = false;
 
 	sf::Texture	_TextureEnemy;
-	sf::Sprite	_Enemy[SPRITE_COUNT_Y];
+	sf::Sprite	_Enemy[SPRITE_COUNT];
 	sf::Texture	_TextureWeapon;
 	sf::Texture	_TextureWeaponEnemy;
 	sf::Texture	_TextureWeaponEnemyMaster;

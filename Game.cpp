@@ -534,7 +534,7 @@ void Game::HandleEnemyMasterSpawn() {
 void Game::HandleEnemySpawn() {
     srand(time(NULL));
 
-    for (int i = 0; i < SPRITE_COUNT_Y; i++) {
+    for (int i = 0; i < SPRITE_COUNT; i++) {
         float yPosition = (float(rand()) / float((RAND_MAX)) * 500);
 
         _Enemy[i].setTexture(_TextureEnemy);
