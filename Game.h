@@ -1,9 +1,7 @@
 #pragma once
 #include "Weapon.h"
 
-#define SPRITE_COUNT_X 11
 #define SPRITE_COUNT_Y 5
-#define BLOCK_COUNT 4
 
 class Game
 {
@@ -20,21 +18,21 @@ private:
 	void InitSprites();
 	void ResetSprites();
 
+	void spawnEnemies();
+
 	void updateStatistics(sf::Time elapsedTime);
 	void HandleTexts();
 	void HandleCollisionEnemyMasterWeaponPlayer();
 	void HanldeEnemyMasterWeaponMoves();
 	void HandleEnemyMasterWeaponFiring();
-	void HandleCollisionEnemyMasterWeaponBlock();
+	void HandleEnemyMasterSpawn();
 	void HandleEnemyMasterMove();
-	void HandleCollisionEnemyWeaponBlock();
 	void HandleCollisionWeaponPlayer();
 	void HanldeEnemyWeaponMoves();
 	void HandleEnemyWeaponFiring();
-	void HandleCollisionBlockEnemy();
+	void HandleEnemySpawn();
 	void HandleEnemyMoves();
 	void HanldeWeaponMoves();
-	void HandleCollisionWeaponBlock();
 	void HandleCollisionWeaponEnemy();
 	void HandleCollisionWeaponEnemyMaster();
 	void HandleGameOver();
@@ -43,7 +41,11 @@ private:
 
 private:
 	static const float		PlayerSpeed;
+	static const float      WeaponSpeed;
 	static const sf::Time	TimePerFrame;
+	static const sf::Time   TimeEnemySpawn;
+	static const sf::Time   TimeEnemyMasterSpawn;
+	static const sf::Time   TimeSpawnWave;
 
 	sf::RenderWindow		mWindow;
 	sf::Texture	mTexture;
@@ -69,9 +71,7 @@ private:
 	bool _IsEnemyMasterWeaponFired = false;
 
 	sf::Texture	_TextureEnemy;
-	sf::Sprite	_Enemy[SPRITE_COUNT_X][SPRITE_COUNT_Y];
-	sf::Texture	_TextureBlock;
-	sf::Sprite	_Block[BLOCK_COUNT];
+	sf::Sprite	_Enemy[SPRITE_COUNT_Y];
 	sf::Texture	_TextureWeapon;
 	sf::Texture	_TextureWeaponEnemy;
 	sf::Texture	_TextureWeaponEnemyMaster;
