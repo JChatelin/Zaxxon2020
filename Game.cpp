@@ -570,7 +570,7 @@ void Game::HandleEnemySpawn() {
     //
     for (int i = 0; i < SPRITE_COUNT_Y; i++)
     {
-        if(spawnTimer == TimeEnemySpawn) {
+        if(spawnTimer >= TimeEnemySpawn) {
             float yPosition = (float(rand()) / float((RAND_MAX)) * 500);
             _Enemy[i].setTexture(_TextureEnemy);
             _Enemy[i].setRotation(70.f);
@@ -617,7 +617,7 @@ void Game::HandleEnemyMoves()
 		x -= 1.f;
 		entity->m_times++;
 
-		if (y >= 500 || y <= 100) //0)
+		if (y >= 550 || y <= 50) //0)
 		{
 			if (entity->m_bBackToFront == true)
 			{
@@ -655,8 +655,8 @@ void Game::HanldeWeaponMoves()
 		float x, y;
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
-        x += WeaponSpeed;
-        y -= WeaponSpeed;
+        x += WeaponSpeed * 2.f;
+        y -= WeaponSpeed / 2.f;
 
 		if (x >= 840)
 		{
@@ -830,8 +830,10 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 		sw->m_sprite.setRotation(70.f);
         sw->m_sprite.setScale(2.f, 2.f);
 		sw->m_sprite.setPosition(
-			EntityManager::GetPlayer()->m_sprite.getPosition().x + EntityManager::GetPlayer()->m_sprite.getTexture()->getSize().x / 2,
-			EntityManager::GetPlayer()->m_sprite.getPosition().y - 10);
+			EntityManager::GetPlayer()->m_sprite.getPosition().x +
+			EntityManager::GetPlayer()->m_sprite.getTexture()->getSize().x / 2.f,
+			EntityManager::GetPlayer()->m_sprite.getPosition().y +
+			EntityManager::GetPlayer()->m_sprite.getTexture()->getSize().y / 2.f);
 		sw->m_type = EntityType::weapon;
 		sw->m_size = _TextureWeapon.getSize();
 		EntityManager::m_Entities.push_back(sw);
