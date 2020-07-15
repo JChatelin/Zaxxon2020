@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cmath>
 #include <ctime>
 #include <string>
 #include <sstream>
@@ -11,6 +12,7 @@
 #include <algorithm>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <SFML/OpenGL.hpp>
 
 #pragma comment(lib, "sfml-audio-d.lib")

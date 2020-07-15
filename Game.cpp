@@ -4,9 +4,10 @@
 #include "EntityManager.h"
 
 const float Game::PlayerSpeed = 200.f;
-const float Game::WeaponSpeed = 3.f;
-float Game::TimeSpawnWave = 0.f;
-float Game::TimeEnemyMasterSpawn = 0.f;
+const float Game::WeaponSpeed = 1.5f;
+float Game::TimeSpawnWave = 3.f;
+float Game::TimeEnemyMasterSpawn = 10.f;
+const double Game::PI = 2 * acos(0.0);
 const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Game::Game()
@@ -23,13 +24,14 @@ Game::Game()
 	, mIsMovingLeft(false)
 {
 	mWindow.setFramerateLimit(160);
-
+	buffer.loadFromFile("../Media/03-Main_Music.wav");
+	mainAudio.setBuffer(buffer);
 	_TextureWeapon.loadFromFile("../Media/Textures/SI_WeaponGreen.png");
 	_TextureWeaponEnemy.loadFromFile("../Media/Textures/SI_WeaponYellow.png");
 	_TextureWeaponEnemyMaster.loadFromFile("../Media/Textures/SI_WeaponRed.png");
-	mTexture.loadFromFile("../Media/Textures/SI_Player.png");
-	_TextureEnemyMaster.loadFromFile("../Media/Textures/SI_EnemyMaster.png");
-	_TextureEnemy.loadFromFile("../Media/Textures/SI_Enemy.png");
+	mTexture.loadFromFile("../Media/Textures/ennemy_3.png");
+	_TextureEnemyMaster.loadFromFile("../Media/Textures/ennemy_motherSS.png");
+	_TextureEnemy.loadFromFile("../Media/Textures/ennemy_1.png");
 	mFont.loadFromFile("../Media/Sansation.ttf");
 
 	InitSprites();
@@ -105,6 +107,8 @@ void Game::run()
 {
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
+	mainAudio.setLoop(true);
+	mainAudio.play();
 	while (mWindow.isOpen())
 	{
 		sf::Time elapsedTime = clock.restart();
@@ -228,7 +232,7 @@ void Game::updateStatistics(sf::Time elapsedTime)
 		HanldeWeaponMoves();
 		HanldeEnemyWeaponMoves();
 		HanldeEnemyMasterWeaponMoves();
-		HandleEnemyMoves();
+		HandleEnemyMoves(elapsedTime);
 		HandleEnemyMasterMove();
 		HandleEnemyWeaponFiring();
 		HandleEnemyMasterWeaponFiring();
@@ -359,10 +363,10 @@ void Game::HandleEnemyMasterMove()
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
 
-		if (entity->m_bBackToFront == true)
-			y = y + 0.5f;
-		else
-			y = y - 0.5f;
+        if (entity->m_bBackToFront == true)
+            y += sin(numberOfTicks * 0.1f * PI);
+        else
+            y -= sin(numberOfTicks * 0.1f * PI);
 
         x -= 1.f;
 		entity->m_times++;
@@ -550,11 +554,12 @@ void Game::HandleEnemySpawn() {
     }
 }
 
-void Game::HandleEnemyMoves()
+void Game::HandleEnemyMoves(sf::Time elapsedTime)
 {
-	//
+	//é
 	// Handle Enemy moves
 	//
+	numberOfTicks += elapsedTime.asSeconds();
 	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
 	{
 		if (entity->m_enabled == false)
@@ -572,14 +577,14 @@ void Game::HandleEnemyMoves()
 		y = entity->m_sprite.getPosition().y;
 
 		if (entity->m_bBackToFront == true)
-		    y += 0.5f;
+		    y += sin(numberOfTicks * 0.3f * PI);
 		else
-			y -= 0.5f;
+			y -= sin(numberOfTicks * 0.3f * PI);
 
 		x -= 1.f;
 		entity->m_times++;
 
-		if (y >= 550 || y <= 50) //0)
+		if (y >= 500 || y <= 50) //0)
 		{
 			if (entity->m_bBackToFront == true)
 			{
@@ -757,6 +762,7 @@ void Game::DisplayGameOver()
 		mText.setString("GAME OVER");
 
 		_IsGameOver = true;
+		mainAudio.stop();
 	}
 	else
 	{

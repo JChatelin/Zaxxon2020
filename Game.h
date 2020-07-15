@@ -30,7 +30,7 @@ private:
 	void HandleCollisionWeaponPlayer();
 	void HanldeEnemyWeaponMoves();
 	void HandleEnemyWeaponFiring();
-	void HandleEnemyMoves();
+	void HandleEnemyMoves(sf::Time elapsedTime);
 	void HanldeWeaponMoves();
 	void HandleCollisionWeaponEnemy();
 	void HandleCollisionWeaponEnemyMaster();
@@ -39,6 +39,7 @@ private:
 	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
 
 private:
+    static const double     PI;
 	static const float		PlayerSpeed;
 	static const float      WeaponSpeed;
     static float      TimeEnemyMasterSpawn;
@@ -56,7 +57,7 @@ private:
 	int _lives = 3;
 	sf::Text	_ScoreText;
 	int _score = 0;
-
+    float numberOfTicks = 0;
 	std::size_t	mStatisticsNumFrames;
 	bool mIsMovingUp;
 	bool mIsMovingDown;
@@ -68,6 +69,8 @@ private:
 	bool _IsPlayerWeaponFired = false;
 	bool _IsEnemyMasterWeaponFired = false;
 
+    sf::Sound mainAudio;
+    sf::SoundBuffer buffer;
 	sf::Texture	_TextureEnemy;
 	sf::Sprite	_Enemy[SPRITE_COUNT];
 	sf::Texture	_TextureWeapon;
