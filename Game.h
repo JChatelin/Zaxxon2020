@@ -18,6 +18,7 @@ private:
 	void ResetSprites();
 
     void HandleEnemySpawn();
+    void HandleSpinningEnemySpawn();
     void HandleEnemyMasterSpawn();
     void spawnEnemies(sf::Time elapsedTime);
 
@@ -28,11 +29,15 @@ private:
 	void HandleEnemyMasterWeaponFiring();
 	void HandleEnemyMasterMove();
 	void HandleCollisionWeaponPlayer();
+	void HandleSpinningEnemyWeaponMoves();
+	void HandleSpinningEnemyWeaponFiring();
+	void HandleSpinningEnemyMoves();
 	void HanldeEnemyWeaponMoves();
 	void HandleEnemyWeaponFiring();
 	void HandleEnemyMoves(sf::Time elapsedTime);
 	void HanldeWeaponMoves();
 	void HandleCollisionWeaponEnemy();
+	void HandleCollisionWeaponSpinningEnemy();
 	void HandleCollisionWeaponEnemyMaster();
 	void HandleGameOver();
 	void DisplayGameOver();
@@ -42,8 +47,12 @@ private:
     static const double     PI;
 	static const float		PlayerSpeed;
 	static const float      WeaponSpeed;
+	static const float      MasterLaserSpeed;
+	static const float      PlayerWeaponSpeed;
+	static const float      MasterSpawn, EnemySpawn, SpinningEnemySpawn;
     static float      TimeEnemyMasterSpawn;
     static float      TimeSpawnWave;
+    static float      TimeSpinningEnemySpawn;
 	static const sf::Time	TimePerFrame;
 
 	sf::RenderWindow		mWindow;
@@ -67,15 +76,18 @@ private:
 	bool _IsGameOver = false;
 	bool _IsEnemyWeaponFired = false;
 	bool _IsPlayerWeaponFired = false;
+	bool _IsSpinningEnemyWeaponFired = false;
 	bool _IsEnemyMasterWeaponFired = false;
 
     sf::Sound mainAudio;
     sf::SoundBuffer buffer;
 	sf::Texture	_TextureEnemy;
 	sf::Sprite	_Enemy[SPRITE_COUNT];
+	sf::Sprite  _SpinningEnemy;
 	sf::Texture	_TextureWeapon;
 	sf::Texture	_TextureWeaponEnemy;
 	sf::Texture	_TextureWeaponEnemyMaster;
+	sf::Texture _TextureSpinningEnemy;
 	sf::Sprite	_Weapon;
 	sf::Texture	_TextureEnemyMaster;
 	sf::Sprite	_EnemyMaster;

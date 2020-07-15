@@ -8,7 +8,7 @@ enum EntityType
 	enemyMasterWeapon,
 	enemy,
 	enemyMaster,
-	block
+	spiningEnemy
 };
 
 class Entity
